@@ -16,6 +16,11 @@ A reproducible foundry that generates `(source_code, semantic-IR, English-descri
 
 `Python` · `PostgreSQL` · `Docker` · `LLM evaluation` · 25K LOC · 274 tests · CI reproduction gate
 
+### [cuarzo-gng](https://github.com/arangoe036-ui/cuarzo-gng) — a pre-registered experiment that killed its own idea
+A decision experiment asking whether an "un-gameable" code grader could survive an adversary. I froze the thresholds and the reading of the outcome in a pre-registration *before* collecting data, then red-teamed my own grader black-box with an independent behavioral meta-oracle judging correctness. Result: an **80% escape rate** (95% bootstrap CI [65%, 92.5%]) — a static tamper blocklist is structurally routable. The pre-registered reading said stop, so the expensive downstream tiers were deliberately never built.
+
+`Python` · `red-teaming` · `experiment design` · pre-registration · bootstrap CIs · sandboxed execution
+
 *More projects on the way — I'm polishing several ML and full-stack builds for release.*
 
 ---
