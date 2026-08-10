@@ -1,51 +1,67 @@
-# Hi, I'm Esteban Arango 👋
+# Esteban Arango
 
-Master's student in **Artificial Intelligence** at Northeastern University.
+M.S. Artificial Intelligence — Northeastern University
 
-I build the control that could kill my own result, run it, and report what it says — including
-when it says the result isn't there. Across the projects below that has meant a red-team that
-broke my own grader, a baseline with no neural network that matched my policy, and a headline
-I withdrew after re-measuring it at the right unit of analysis.
+**I build the control that could kill my result, and I report it.**
 
-- 🎓 M.S. in Artificial Intelligence
-- 🔭 Machine learning, LLM evaluation, and measurement you can actually defend
-- 🛠️ **Stack:** Python · PyTorch · TypeScript · Next.js · PostgreSQL · Docker
-- 📫 **Reach me:** arangomoreno.e@northeastern.edu
+Most ML write-ups report the number that worked. I'm more interested in the comparison that
+decides whether the number means anything — the null that never looks at the data, the adversary
+attacking my own grader, the baseline matched on my own model's statistics. Two of the three
+projects below lead with a result I didn't want.
 
-## 🚀 Featured Projects
+- 🎓 M.S. in Artificial Intelligence, Northeastern University
+- 🔭 Imitation learning · LLM evaluation · geospatial ML · reproducible pipelines
+- 🛠️ Python · PyTorch · Docker · PostgreSQL · TypeScript · Next.js
+- 📫 arangomoreno.e@northeastern.edu
 
-### [mario-imitation-learning](https://github.com/arangoe036-ui/mario-imitation-learning) — can imitation alone clear Mario 1-1?
-Supervised learning from a flawless tool-assisted speedrun — no policy gradient, no value
-bootstrapping. The policy does reach the flagpole, on **4 of 200** episodes. A script that never
-looks at the screen does it on **1 of 200** (Fisher p = 0.372), so that clip proves nothing, and
-the README says so. What survives is narrower and real: at the **Koopas** — the one obstacle that
-*moves* — the policy beats a representation-matched blind baseline by **+5.5 pp, 10/10 paired
-seeds, p = 0.0020**, surviving Bonferroni correction. The negative has a mechanism: the corpus is
-**1,223,797 frames containing zero deaths and zero recoveries**, so the policy never sees a single
-example of getting out of trouble, and live play peaks at **0.82 epochs** while the loss keeps
-falling.
+---
 
-`Python` · `PyTorch` · imitation learning · 324 tests · 8 intervention families closed by measurement
+## Projects
 
-### [llm-training-data-foundry](https://github.com/arangoe036-ui/llm-training-data-foundry) — verified LLM training data + a fault-localization benchmark
-A reproducible foundry generating `(source_code, semantic-IR, English-description)` triples from
-integer seeds — never scraped, never model-generated. Every pair clears four verification layers
-(pyflakes, radon, mypy, sandboxed Docker execution against oracle outputs), and a SHA-256 hash
-chain makes post-generation tampering detectable. A mutation layer injects single localized faults
-with deterministic ground-truth keys to build a benchmark that scores a model's answers
-mechanically.
+### [mario-imitation-learning](https://github.com/arangoe036-ui/mario-imitation-learning) — can supervised learning alone clear Mario 1-1?
 
-`Python` · `PostgreSQL` · `Docker` · LLM evaluation · 25K LOC · 614 passing tests · CI reproduction gate
+A verified TAS→training-data pipeline, a behavioural-cloning policy, and — the actual contribution —
+the controls that decide whether any of it worked.
 
-### [grader-gameability-study](https://github.com/arangoe036-ui/grader-gameability-study) — a pre-registered experiment that killed its own idea
-Could an "un-gameable" code grader survive an adversary? I froze the thresholds and the reading of
-the outcome *before* collecting data, then red-teamed my own grader black-box with an independent
-behavioural meta-oracle judging correctness. Result: an **80% escape rate** (95% bootstrap CI
-[65%, 92.5%]) — a static tamper blocklist is structurally routable. The pre-registered reading said
-stop, so the expensive downstream tiers were deliberately never built.
+The policy reaches the flagpole on **2.0% of episodes [0.8%, 5.0%]**. A fixed-rate script that never
+looks at the screen does it on **0.5% [0.09%, 2.8%]**, Fisher **p = 0.372**. So the completion is real,
+and it is not evidence of learned skill — the control that empties it of meaning is the point.
+
+Where learning genuinely wins is the Koopas: **+5.5 pp** over a script matched on the policy's own
+action statistics, **10/10 paired seeds, p = 0.0020**, surviving Bonferroni correction across a
+four-region family. The mechanism was specified before the result — the Koopas move, and a blind
+fixed distribution cannot track a moving obstacle.
+
+`PyTorch` · behavioural cloning · NES emulation · 324 tests (306 pass, 18 need a ROM you supply) · Apache-2.0
+
+### [llm-training-data-foundry](https://github.com/arangoe036-ui/llm-training-data-foundry) — verified LLM training data, reproducible to the bit
+
+Generates `(source_code, semantic-IR, English-description)` triples from a single integer seed —
+never scraped, never model-generated. Every pair clears four verification layers (pyflakes, radon
+complexity, mypy, and sandboxed Docker execution against oracle-computed outputs), and a SHA-256
+hash chain binds source, IR, and description so any consumer can independently detect post-generation
+tampering.
+
+A mutation layer injects single localized faults with deterministic ground-truth keys, turning the
+dataset into a fault-localization benchmark that scores a model's WHERE / WHAT / HOW-TO-FIX answers
+mechanically — no human annotation, no model in the loop.
+
+`Python` · `PostgreSQL` · `Docker` · 274 tests across 28 files · CI reproduction gate
+
+### [grader-gameability-study](https://github.com/arangoe036-ui/grader-gameability-study) — a pre-registered experiment built to kill its own idea
+
+**The negative result is the deliverable.** I froze the thresholds and the reading of the outcome in
+a pre-registration *before* collecting any data, then red-teamed my own code grader black-box, with an
+independent behavioural meta-oracle deciding correctness so the harness could only make the grader look
+worse, never falsely better.
+
+Result: an **80% escape rate** (95% bootstrap CI [65%, 92.5%]) — a static tamper blocklist is
+structurally routable. The pre-registered stop rule said stop, so the expensive downstream tiers were
+deliberately never built. The `NotImplementedError`s under `experiments/` are that rule working as
+designed, not abandoned work.
 
 `Python` · red-teaming · pre-registration · bootstrap CIs · sandboxed execution
 
 ---
 
-<sub>Always open to conversations about AI, evaluation, and building things that hold up under scrutiny.</sub>
+<sub>Open to conversations about AI, evaluation, and building things that hold up under scrutiny.</sub>
