@@ -18,6 +18,32 @@ projects below lead with a result I didn't want.
 
 ## Projects
 
+### [speculative-coder](https://github.com/arangoe036-ui/speculative-coder) — 2.40× faster local LLM inference, distribution provably unchanged
+A from-scratch PyTorch speculative decoding engine — no `vllm`, no `assistant_model=` — and an
+empirical study of the thirteen architectures built around it. **2.40× on a 7B code model** (13.6 →
+32.7 tok/s, single RTX 5080) with the emitted tokens **provably identical** to what the target model
+would have sampled. The winning design splits a draft branch only where the drafter is unsure —
+certainty costs one batch row, uncertainty costs two. **Seven of the thirteen architectures were
+falsified**, each with the measured mechanism that killed it.
+
+Losslessness is verified, not asserted: a 10,000-run Monte Carlo goodness-of-fit on the rejection
+sampler, an *independent* full-recompute greedy oracle every engine must match token-for-token, and a
+precision sweep reported honestly (fp32 5/5 bitwise identical, bf16 4/5, int8 2/5). The naive
+implementation bug — resampling from `p` instead of the residual — is **caught at 20σ**, so the test
+is proven able to fail.
+
+`Python` · `PyTorch` · `CUDA` · speculative decoding · 10.5K LOC · 451 tests
+
+### [apex-matrix](https://github.com/arangoe036-ui/apex-matrix) — ten mechanisms built to produce pack hunting, all ten falsified
+A multi-agent RL testbed for predator–prey coevolution: 96 agents, MAPPO with a centralized critic,
+raycast vision, energy budgets and reproduction. Learning is real and proven against a control
+verified **inert** — policy entropy bit-identical across all 240 recorded rows. Then ten separate
+mechanisms designed to produce cooperative hunting were each measured against **its own** chance
+floor, and **all ten failed**. The only effect that moved unanimously — more episode time — made
+coordination *worse*.
+
+`Python` · `PyTorch` · `PettingZoo` · multi-agent RL · 47K LOC · 449 tests
+
 ### [mario-imitation-learning](https://github.com/arangoe036-ui/mario-imitation-learning) — can supervised learning alone clear Mario 1-1?
 
 A verified TAS→training-data pipeline, a behavioural-cloning policy, and — the actual contribution —
