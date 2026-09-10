@@ -2,13 +2,15 @@
 
 **M.S. Artificial Intelligence — Northeastern University**
 
-ML engineer working on inference and evaluation — speculative decoding, quantization, and the
-occasional reinforcement learning detour. Everything here runs on a single consumer GPU.
+Master's student in Artificial Intelligence, building toward ML engineering.
 
-I mostly build things to find out whether an idea holds up, so these repos tend to include the
-controls and the arms that didn't work, not just the ones that did.
+Right now that means inference and evaluation — speculative decoding, quantization, and the
+occasional reinforcement learning detour — all of it built and measured on a single consumer GPU.
 
-**Currently finishing my master's and looking for my first ML engineering role.**
+The part I like most is finding out whether an idea actually holds up. So these repos tend to
+carry the controls and the arms that didn't work alongside the ones that did.
+
+**Looking for a Spring 2027 co-op in ML / AI engineering.**
 
 - 🔭 Inference optimization · quantization · LLM evaluation · multi-agent RL · retrieval
 - 🛠️ Python · PyTorch · CUDA · Docker · PostgreSQL · FastAPI · ChromaDB · TypeScript · Next.js
