@@ -1,93 +1,111 @@
 # Esteban Arango
 
-M.S. Artificial Intelligence — Northeastern University
+**M.S. Artificial Intelligence — Northeastern University**
 
-**I build the control that could kill my result, and I report it.**
+## I make models run faster on hardware you can actually buy, and I prove the speedup cost nothing.
 
-Most ML write-ups report the number that worked. I'm more interested in the comparison that
-decides whether the number means anything — the null that never looks at the data, the adversary
-attacking my own grader, the baseline matched on my own model's statistics. Two of the three
-projects below lead with a result I didn't want.
+Inference optimization, quantization, and evaluation. Everything below runs on a single consumer
+GPU. Every headline number here has a control behind it that was built to take it away — that is
+why the numbers are worth reading.
 
-- 🎓 M.S. in Artificial Intelligence, Northeastern University
-- 🔭 Imitation learning · LLM evaluation · geospatial ML · reproducible pipelines
-- 🛠️ Python · PyTorch · Docker · PostgreSQL · TypeScript · Next.js
+- 🔭 Inference optimization · quantization · LLM evaluation · multi-agent RL · retrieval
+- 🛠️ Python · PyTorch · CUDA · Docker · PostgreSQL · FastAPI · ChromaDB · TypeScript · Next.js
 - 📫 arangomoreno.e@northeastern.edu
 
 ---
 
-## Projects
+## Featured
 
-### [speculative-coder](https://github.com/arangoe036-ui/speculative-coder) — 2.40× faster local LLM inference, distribution provably unchanged
-A from-scratch PyTorch speculative decoding engine — no `vllm`, no `assistant_model=` — and an
-empirical study of the thirteen architectures built around it. **2.40× on a 7B code model** (13.6 →
-32.7 tok/s, single RTX 5080) with the emitted tokens **provably identical** to what the target model
-would have sampled. The winning design splits a draft branch only where the drafter is unsure —
-certainty costs one batch row, uncertainty costs two. **Seven of the thirteen architectures were
-falsified**, each with the measured mechanism that killed it.
+### [speculative-coder](https://github.com/arangoe036-ui/speculative-coder) — 2.40× faster local inference, provably lossless
 
-Losslessness is verified, not asserted: a 10,000-run Monte Carlo goodness-of-fit on the rejection
-sampler, an *independent* full-recompute greedy oracle every engine must match token-for-token, and a
-precision sweep reported honestly (fp32 5/5 bitwise identical, bf16 4/5, int8 2/5). The naive
-implementation bug — resampling from `p` instead of the residual — is **caught at 20σ**, so the test
-is proven able to fail.
+**13.6 → 32.7 tok/s on a 7B code model, single RTX 5080, emitting exactly the tokens the target
+model would have sampled.** No `vllm`, no `assistant_model=` — the rejection sampler, generation
+loop, KV-cache rollback and twelve speculation strategies are written from scratch in PyTorch.
 
-`Python` · `PyTorch` · `CUDA` · speculative decoding · 10.5K LOC · 451 tests
+The winning design drafts one branch and splits it only where the drafter is unsure: certainty
+costs one batch row, uncertainty costs two. It hits the highest measured throughput on **3.1×
+less draft compute** than fixed-width parallel drafting.
 
-### [apex-matrix](https://github.com/arangoe036-ui/apex-matrix) — ten mechanisms built to produce pack hunting, all ten falsified
-A multi-agent RL testbed for predator–prey coevolution: 96 agents, MAPPO with a centralized critic,
-raycast vision, energy budgets and reproduction. Learning is real and proven against a control
-verified **inert** — policy entropy bit-identical across all 240 recorded rows. Then ten separate
-mechanisms designed to produce cooperative hunting were each measured against **its own** chance
-floor, and **all ten failed**. The only effect that moved unanimously — more episode time — made
-coordination *worse*.
+Losslessness is verified, not asserted — a 10,000-run Monte Carlo goodness-of-fit on the sampler,
+an independent full-recompute oracle every engine must match token-for-token, and a precision
+sweep reported as measured. The classic implementation bug in this algorithm is caught at **20σ**,
+so the test is proven able to fail. Twelve architectures built, eight falsified, each with the
+mechanism that ruled it out.
 
-`Python` · `PyTorch` · `PettingZoo` · multi-agent RL · 47K LOC · 449 tests
+`PyTorch` · `CUDA` · speculative decoding · 12.7K LOC · 451 tests
 
-### [mario-imitation-learning](https://github.com/arangoe036-ui/mario-imitation-learning) — can supervised learning alone clear Mario 1-1?
+### [mixed-precision-search](https://github.com/arangoe036-ui/mixed-precision-search) — an LLM agent lost to a greedy loop by 4,386×
 
-A verified TAS→training-data pipeline, a behavioural-cloning policy, and — the actual contribution —
-the controls that decide whether any of it worked.
+**Deterministic search over per-layer bit-widths to fit a model into a fixed VRAM budget**, with an
+exact integer ledger for memory so the constraint is checkable rather than estimated. PPL **6.38**
+at a 3.5-bit envelope.
 
-The policy reaches the flagpole on **2.0% of episodes [0.8%, 5.0%]**. A fixed-rate script that never
-looks at the screen does it on **0.5% [0.09%, 2.8%]**, Fisher **p = 0.372**. So the completion is real,
-and it is not evidence of learned skill — the control that empties it of meaning is the point.
+The finding worth having in 2026 is the negative one, and it is measured rather than argued: an
+LLM agent proposing bit allocations **never beat uniform assignment**, violated a constraint
+reducible to summing 24 integers on **14 of 14 and 9 of 14** attempts across runs, found zero
+feasible allocations in 2 of 4 runs, and correlated **−0.205** and **+0.000** with measured
+layer sensitivity. It lost to plain greedy ascent by 4,386× at the same memory envelope, so I
+deleted it. A second arm found 2:4 structured sparsity losing to dense by **3,307× at equal
+memory** — against an iso-VRAM control I had to build myself, because the two configurations I
+was handed were not memory-matched.
 
-Where learning genuinely wins is the Koopas: **+5.5 pp** over a script matched on the policy's own
-action statistics, **10/10 paired seeds, p = 0.0020**, surviving Bonferroni correction across a
-four-region family. The mechanism was specified before the result — the Koopas move, and a blind
-fixed distribution cannot track a moving obstacle.
+`PyTorch` · quantization · sparsity · constrained search · 2.5K LOC
 
-`PyTorch` · behavioural cloning · NES emulation · 324 tests (306 pass, 18 need a ROM you supply) · Apache-2.0
+### [apex-matrix](https://github.com/arangoe036-ui/apex-matrix) — 96 agents learning simultaneously at ~770 decision-steps/sec
 
-### [llm-training-data-foundry](https://github.com/arangoe036-ui/llm-training-data-foundry) — verified LLM training data, reproducible to the bit
+**A predator–prey testbed where both species learn at once** — MAPPO with a centralized critic over
+a 224-wide global state, structure-of-arrays physics, and throughput that *rises* as the population
+grows. Population is a state variable: animals mate, gestate and are born mid-episode.
 
-Generates `(source_code, semantic-IR, English-description)` triples from a single integer seed —
-never scraped, never model-generated. Every pair clears four verification layers (pyflakes, radon
-complexity, mypy, and sandboxed Docker execution against oracle-computed outputs), and a SHA-256
-hash chain binds source, IR, and description so any consumer can independently detect post-generation
-tampering.
+Learning is real and proven against a control verified inert — predators go **7.441 → 13.921 mean
+return on 3 of 3 seeds** against frozen prey, while a learning-rate-zero control goes 7.441 → 7.005
+on 0 of 3, with policy entropy bit-identical across all 240 recorded rows. Ten mechanisms designed
+to produce pack hunting were then each measured against **its own** chance floor. All ten failed.
 
-A mutation layer injects single localized faults with deterministic ground-truth keys, turning the
-dataset into a fault-localization benchmark that scores a model's WHERE / WHAT / HOW-TO-FIX answers
-mechanically — no human annotation, no model in the loop.
+`PyTorch` · `PettingZoo` · multi-agent RL · 48K LOC · 467 tests
 
-`Python` · `PostgreSQL` · `Docker` · 274 tests across 28 files · CI reproduction gate
+### [industrial-ai-copilot](https://github.com/arangoe036-ui/industrial-ai-copilot) — RAG that cites the cell and the formula, not just the document
 
-### [grader-gameability-study](https://github.com/arangoe036-ui/grader-gameability-study) — a pre-registered experiment built to kill its own idea
+**A local multi-agent copilot over a real industrial document set** — an ISO 9001 quality manual,
+a cable-run quoter with 47 live spreadsheet formulas, and an installation SOP — answering
+operational questions while citing the exact page, cell and formula behind every number.
 
-**The negative result is the deliverable.** I froze the thresholds and the reading of the outcome in
-a pre-registration *before* collecting any data, then red-teamed my own code grader black-box, with an
-independent behavioural meta-oracle deciding correctness so the harness could only make the grader look
-worse, never falsely better.
+The Excel formula chain survives **byte-for-byte** into vector metadata, and the engine resolves
+the full chain through surcharges, freight and tax to the final total. A three-stage degradation
+cascade falls from a 14B model to an 8B one to a **citation-only extractive mode** that still
+answers auditably with no LLM at all, and `/api/health` warns when a substitute model is loaded
+rather than pretending it is the intended one.
 
-Result: an **80% escape rate** (95% bootstrap CI [65%, 92.5%]) — a static tamper blocklist is
-structurally routable. The pre-registered stop rule said stop, so the expensive downstream tiers were
-deliberately never built. The `NotImplementedError`s under `experiments/` are that rule working as
-designed, not abandoned work.
-
-`Python` · red-teaming · pre-registration · bootstrap CIs · sandboxed execution
+`FastAPI` · `Streamlit` · `ChromaDB` · `Ollama` · recursive-descent formula parser · 22 tests
 
 ---
 
-<sub>Open to conversations about AI, evaluation, and building things that hold up under scrutiny.</sub>
+## Also
+
+**[mario-imitation-learning](https://github.com/arangoe036-ui/mario-imitation-learning)** — can
+behavioural cloning alone clear Mario 1-1 from a perfect TAS speedrun? Where it demonstrably works
+is the Koopas: **+5.5 pp** over a script matched on the policy's own action statistics, 10/10
+paired seeds, **p = 0.0020**, surviving Bonferroni across a four-region family. The mechanism was
+named before the result was known.
+
+**[llm-training-data-foundry](https://github.com/arangoe036-ui/llm-training-data-foundry)** —
+`(source, semantic-IR, description)` triples reproducible to the bit from a single integer seed,
+never scraped and never model-generated. Four verification layers including sandboxed Docker
+execution against oracle-computed outputs, a SHA-256 hash chain binding all three fields, and a CI
+reproduction gate. `PostgreSQL` · `Docker` · 276 test functions / 615 cases.
+
+**[flbench](https://github.com/arangoe036-ui/flbench)** — repair difficulty is a property of the
+fault class, not the model: family ordering is identical across three models from two labs, every
+pairwise Spearman **rho = +1.000**, surviving a program-length control. Also retracts its own
+original headline in full, because that headline turned out to be a defect in my scorer.
+
+**[grader-gameability-study](https://github.com/arangoe036-ui/grader-gameability-study)** — a
+pre-registered black-box red team that broke my own code grader in **80%** of attempts (95% CI
+[65%, 92.5%]), with an independent behavioural meta-oracle so the harness could only make the
+grader look worse, never falsely better.
+
+---
+
+<sub>Also building an ML-augmented statistical arbitrage engine — PCA/DBSCAN cointegration
+screening with FDR control and a walk-forward backtester. Open to conversations about inference,
+evaluation, and building things that hold up under scrutiny.</sub>
