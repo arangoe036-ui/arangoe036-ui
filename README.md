@@ -2,11 +2,13 @@
 
 **M.S. Artificial Intelligence — Northeastern University**
 
-## I make models run faster on hardware you can actually buy, and I prove the speedup cost nothing.
+ML engineer working on inference and evaluation — speculative decoding, quantization, and the
+occasional reinforcement learning detour. Everything here runs on a single consumer GPU.
 
-Inference optimization, quantization, and evaluation. Everything below runs on a single consumer
-GPU. Every headline number here has a control behind it that was built to take it away — that is
-why the numbers are worth reading.
+I mostly build things to find out whether an idea holds up, so these repos tend to include the
+controls and the arms that didn't work, not just the ones that did.
+
+**Currently finishing my master's and looking for my first ML engineering role.**
 
 - 🔭 Inference optimization · quantization · LLM evaluation · multi-agent RL · retrieval
 - 🛠️ Python · PyTorch · CUDA · Docker · PostgreSQL · FastAPI · ChromaDB · TypeScript · Next.js
